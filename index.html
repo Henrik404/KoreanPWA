@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>韓文拼音學習PWA</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* 基本樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            margin: 0.5rem 0 0 0;
+        }
+
+        nav li {
+            margin: 0 1rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        main {
+            flex: 1;
+            padding: 1rem;
+        }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        footer {
+            background-color: #f1f1f1;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 600px) {
+            nav ul {
+                flex-direction: column;
+            }
+
+            nav li {
+                margin: 0.5rem 0;
+            }
+        }
+
+        /* 其他樣式 */
+        .char-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .char-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .char-symbol {
+            font-size: 2rem;
+            margin-right: 1rem;
+        }
+
+        button.play-btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            text-decoration: none;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button.play-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* 練習區域 */
+        .practice-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .option-btn {
+            background-color: #008CBA;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem;
+            text-align: center;
+            text-decoration: none;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .option-btn:hover {
+            background-color: #007bb5;
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>韓文拼音學習</h1>
+        <nav>
+            <ul>
+                <li><a href="#lessons">教材</a></li>
+                <li><a href="#practice">練習</a></li>
+                <li><a href="#progress">進度</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- 教材區域 -->
+        <section id="lessons">
+            <h2>教材</h2>
+            <div id="lesson-content">
+                <!-- 動態加載教材內容 -->
+            </div>
+        </section>
+
+        <!-- 練習區域 -->
+        <section id="practice">
+            <h2>練習</h2>
+            <div class="practice-section">
+                <button id="start-practice-btn" class="option-btn">開始練習</button>
+                <div id="practice-content" style="display:none;">
+                    <p id="question"></p>
+                    <div class="options" id="options-container">
+                        <!-- 選項按鈕 -->
+                    </div>
+                    <p class="feedback" id="feedback"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 進度區域 -->
+        <section id="progress">
+            <h2>進度</h2>
+            <div id="progress-content">
+                <!-- 用戶進度展示 -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 韓文拼音學習PWA</p>
+    </footer>
+
+    <script>
+        // 內嵌的韓文字母數據
+        const hangulData = {
+            consonants: [
+                { char: 'ㄱ', pronunciation: 'g/k' },
+                { char: 'ㄴ', pronunciation: 'n' },
+                { char: 'ㄷ', pronunciation: 'd/t' },
+                { char: 'ㄹ', pronunciation: 'r/l' },
+                { char: 'ㅁ', pronunciation: 'm' },
+                { char: 'ㅂ', pronunciation: 'b/p' },
+                { char: 'ㅅ', pronunciation: 's' },
+                { char: 'ㅇ', pronunciation: 'ng (silent at beginning)' },
+                { char: 'ㅈ', pronunciation: 'j' },
+                { char: 'ㅊ', pronunciation: 'ch' },
+                { char: 'ㅋ', pronunciation: 'k' },
+                { char: 'ㅌ', pronunciation: 't' },
+                { char: 'ㅍ', pronunciation: 'p' },
+                { char: 'ㅎ', pronunciation: 'h' }
+            ],
+            vowels: [
+                { char: 'ㅏ', pronunciation: 'a' },
+                { char: 'ㅑ', pronunciation: 'ya' },
+                { char: 'ㅓ', pronunciation: 'eo' },
+                { char: 'ㅕ', pronunciation: 'yeo' },
+                { char: 'ㅗ', pronunciation: 'o' },
+                { char: 'ㅛ', pronunciation: 'yo' },
+                { char: 'ㅜ', pronunciation: 'u' },
+                { char: 'ㅠ', pronunciation: 'yu' },
+                { char: 'ㅡ', pronunciation: 'eu' },
+                { char: 'ㅣ', pronunciation: 'i' }
+            ]
+        };
+
+        // 應用初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLessons();
+            loadProgress();
+            setupPractice();
+            registerServiceWorker();
+        });
+
+        // 加載教材內容
+        function loadLessons() {
+            const lessonContent = document.getElementById('lesson-content');
+
+            // 加載子音
+            const consonantsSection = document.createElement('div');
+            consonantsSection.innerHTML = '<h3>子音</h3>';
+            hangulData.consonants.forEach(char => {
+                const charDiv = document.createElement('div');
+                charDiv.classList.add('char-card');
+                charDiv.innerHTML = `
+                    <div class="char-info">
+                        <span class="char-symbol">${char.char}</span>
+                        <span>${char.pronunciation}</span>
+                    </div>
+                    <button class="play-btn" onclick="speak('${char.pronunciation}')">發音</button>
+                `;
+                consonantsSection.appendChild(charDiv);
+            });
+            lessonContent.appendChild(consonantsSection);
+
+            // 加載母音
+            const vowelsSection = document.createElement('div');
+            vowelsSection.innerHTML = '<h3>母音</h3>';
+            hangulData.vowels.forEach(char => {
+                const charDiv = document.createElement('div');
+                charDiv.classList.add('char-card');
+                charDiv.innerHTML = `
+                    <div class="char-info">
+                        <span class="char-symbol">${char.char}</span>
+                        <span>${char.pronunciation}</span>
+                    </div>
+                    <button class="play-btn" onclick="speak('${char.pronunciation}')">發音</button>
+                `;
+                vowelsSection.appendChild(charDiv);
+            });
+            lessonContent.appendChild(vowelsSection);
+        }
+
+        // 使用 Web Speech API 說出發音
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ko-KR'; // 設定語言為韓語
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('抱歉，您的瀏覽器不支持語音合成功能。');
+            }
+        }
+
+        // 加載用戶進度
+        function loadProgress() {
+            const progressContent = document.getElementById('progress-content');
+            const progress = JSON.parse(localStorage.getItem('progress')) || {};
+
+            if (Object.keys(progress).length === 0) {
+                progressContent.innerHTML = '<p>您還沒有開始學習。</p>';
+                return;
+            }
+
+            let html = '<ul>';
+            for (const [key, value] of Object.entries(progress)) {
+                html += `<li>${key}: ${value} 分</li>`;
+            }
+            html += '</ul>';
+            progressContent.innerHTML = html;
+        }
+
+        // 設置練習功能
+        function setupPractice() {
+            const startBtn = document.getElementById('start-practice-btn');
+            const practiceContent = document.getElementById('practice-content');
+            const questionEl = document.getElementById('question');
+            const optionsContainer = document.getElementById('options-container');
+            const feedbackEl = document.getElementById('feedback');
+
+            let currentQuestion = null;
+            let score = 0;
+            let total = 0;
+
+            startBtn.addEventListener('click', () => {
+                startBtn.style.display = 'none';
+                practiceContent.style.display = 'block';
+                generateQuestion();
+            });
+
+            function generateQuestion() {
+                // 混合子音和母音
+                const allChars = [...hangulData.consonants, ...hangulData.vowels];
+                currentQuestion = allChars[Math.floor(Math.random() * allChars.length)];
+                questionEl.textContent = `請選出 "${currentQuestion.pronunciation}" 對應的字母：`;
+
+                // 隨機選擇三個錯誤選項
+                const options = [currentQuestion.char];
+                while (options.length < 4) {
+                    const randomChar = allChars[Math.floor(Math.random() * allChars.length)].char;
+                    if (!options.includes(randomChar)) {
+                        options.push(randomChar);
+                    }
+                }
+
+                // 打亂選項順序
+                options.sort(() => Math.random() - 0.5);
+
+                // 顯示選項
+                optionsContainer.innerHTML = '';
+                options.forEach(option => {
+                    const btn = document.createElement('button');
+                    btn.classList.add('option-btn');
+                    btn.textContent = option;
+                    btn.addEventListener('click', () => {
+                        if (option === currentQuestion.char) {
+                            feedbackEl.textContent = '✅ 正確！';
+                            score += 1;
+                        } else {
+                            feedbackEl.textContent = `❌ 錯誤。正確答案是 "${currentQuestion.char}"。`;
+                        }
+                        total += 1;
+                        saveProgress(currentQuestion.pronunciation, option === currentQuestion.char ? 1 : 0);
+                        setTimeout(() => {
+                            feedbackEl.textContent = '';
+                            generateQuestion();
+                        }, 2000);
+                    });
+                    optionsContainer.appendChild(btn);
+                });
+            }
+
+            // 保存進度到本地存儲
+            function saveProgress(key, value) {
+                const progress = JSON.parse(localStorage.getItem('progress')) || {};
+                if (!progress[key]) {
+                    progress[key] = 0;
+                }
+                progress[key] += value;
+                localStorage.setItem('progress', JSON.stringify(progress));
+                loadProgress();
+            }
+        }
+
+        // 註冊Service Worker以支持PWA功能
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('data:application/javascript;base64,') // 空的Service Worker
+                    .then(registration => {
+                        console.log('Service Worker註冊成功：', registration);
+                    })
+                    .catch(error => {
+                        console.error('Service Worker註冊失敗：', error);
+                    });
+                });
+            }
+        }
+    </script>
+</body>
+</html>
