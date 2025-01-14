@@ -71,14 +71,8 @@
       justify-content: center;
       align-items: center;
       border-radius: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s, color 0.3s;
       font-family: "Zen Maru Gothic", serif;
-    }
-
-    .letter:hover {
-      background-color: #43588D;
-      color: white;
+      font-weight: 500;
     }
   </style>
 </head>
@@ -119,20 +113,6 @@
       ['ン', '', '', '', '']
     ];
 
-    const romanized = [
-      ['a', 'i', 'u', 'e', 'o'],
-      ['ka', 'ki', 'ku', 'ke', 'ko'],
-      ['sa', 'shi', 'su', 'se', 'so'],
-      ['ta', 'chi', 'tsu', 'te', 'to'],
-      ['na', 'ni', 'nu', 'ne', 'no'],
-      ['ha', 'hi', 'fu', 'he', 'ho'],
-      ['ma', 'mi', 'mu', 'me', 'mo'],
-      ['ya', '', 'yu', '', 'yo'],
-      ['ra', 'ri', 'ru', 're', 'ro'],
-      ['wa', '', '', '', 'wo'],
-      ['n', '', '', '', '']
-    ];
-
     const container = document.getElementById('letterContainer');
     const hiraganaButton = document.getElementById('hiraganaButton');
     const katakanaButton = document.getElementById('katakanaButton');
@@ -141,25 +121,12 @@
 
     function renderLetters() {
       container.innerHTML = ''; // Clear previous content
-      currentSet.forEach((row, rowIndex) => {
-        row.forEach((symbol, colIndex) => {
-          if (symbol) {
-            const button = document.createElement('div');
-            button.classList.add('letter');
-            button.textContent = symbol;
-
-            button.addEventListener('click', () => {
-              const original = button.textContent;
-              button.textContent = romanized[rowIndex][colIndex];
-              button.style.color = '#43588D';
-              setTimeout(() => {
-                button.textContent = original;
-                button.style.color = '#1C212B';
-              }, 2000);
-            });
-
-            container.appendChild(button);
-          }
+      currentSet.forEach(row => {
+        row.forEach(symbol => {
+          const button = document.createElement('div');
+          button.classList.add('letter');
+          button.textContent = symbol || ''; // Empty spaces for alignment
+          container.appendChild(button);
         });
       });
     }
