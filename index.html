@@ -27,6 +27,9 @@
 
     .toggle-buttons {
       margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
     }
 
     .toggle-buttons button {
@@ -34,13 +37,56 @@
       color: #1C212B;
       border: none;
       padding: 10px 20px;
-      margin: 0 5px;
       font-size: 16px;
       cursor: pointer;
-      border-radius: 5px;
+      border-radius: 20px;
       font-family: "Zen Maru Gothic", serif;
       font-weight: 500;
-      transition: background-color 0.3s;
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .toggle-buttons button::before,
+    .toggle-buttons button::after {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
+      animation-duration: 6s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+
+    .toggle-buttons button::before {
+      top: -120%;
+      left: -100%;
+      animation-name: move-star-top;
+    }
+
+    .toggle-buttons button::after {
+      bottom: -120%;
+      right: -100%;
+      animation-name: move-star-bottom;
+    }
+
+    @keyframes move-star-top {
+      0% {
+        transform: translate(0, 0);
+      }
+      100% {
+        transform: translate(100%, 100%);
+      }
+    }
+
+    @keyframes move-star-bottom {
+      0% {
+        transform: translate(0, 0);
+      }
+      100% {
+        transform: translate(-100%, -100%);
+      }
     }
 
     .toggle-buttons button:hover {
@@ -70,9 +116,35 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      border-radius: 10px;
+      border-radius: 20px;
       font-family: "Zen Maru Gothic", serif;
       font-weight: 500;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .letter::before,
+    .letter::after {
+      content: '';
+      position: absolute;
+      width: 300%;
+      height: 300%;
+      background: radial-gradient(circle, rgba(0, 0, 0, 0.1), transparent 70%);
+      animation-duration: 6s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+
+    .letter::before {
+      top: -200%;
+      left: -150%;
+      animation-name: move-star-top;
+    }
+
+    .letter::after {
+      bottom: -200%;
+      right: -150%;
+      animation-name: move-star-bottom;
     }
 
     .empty {
@@ -85,7 +157,6 @@
   <div class="toggle-buttons">
     <button id="hiraganaButton" class="active">ひらがな</button>
     <button id="katakanaButton">カタカナ</button>
-    <button onclick="location.href='test.html'">測驗</button>
   </div>
   <div class="container" id="letterContainer"></div>
 
