@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>50音表</title>
+  <title>五十音表</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1C212B">
   <link rel="icon" href="icon.png">
@@ -74,6 +74,10 @@
       font-family: "Zen Maru Gothic", serif;
       font-weight: 500;
     }
+
+    .empty {
+      visibility: hidden;
+    }
   </style>
 </head>
 <body>
@@ -81,6 +85,7 @@
   <div class="toggle-buttons">
     <button id="hiraganaButton" class="active">ひらがな</button>
     <button id="katakanaButton">カタカナ</button>
+    <button onclick="location.href='test.html'">測驗</button>
   </div>
   <div class="container" id="letterContainer"></div>
 
@@ -93,10 +98,10 @@
       ['な', 'に', 'ぬ', 'ね', 'の'],
       ['は', 'ひ', 'ふ', 'へ', 'ほ'],
       ['ま', 'み', 'む', 'め', 'も'],
-      ['や', '', 'ゆ', '', 'よ'],
+      ['や', null, 'ゆ', null, 'よ'],
       ['ら', 'り', 'る', 'れ', 'ろ'],
-      ['わ', '', '', '', 'を'],
-      ['ん', '', '', '', '']
+      ['わ', null, null, null, 'を'],
+      ['ん', null, null, null, null]
     ];
 
     const katakana = [
@@ -107,10 +112,10 @@
       ['ナ', 'ニ', 'ヌ', 'ネ', 'ノ'],
       ['ハ', 'ヒ', 'フ', 'ヘ', 'ホ'],
       ['マ', 'ミ', 'ム', 'メ', 'モ'],
-      ['ヤ', '', 'ユ', '', 'ヨ'],
+      ['ヤ', null, 'ユ', null, 'ヨ'],
       ['ラ', 'リ', 'ル', 'レ', 'ロ'],
-      ['ワ', '', '', '', 'ヲ'],
-      ['ン', '', '', '', '']
+      ['ワ', null, null, null, 'ヲ'],
+      ['ン', null, null, null, null]
     ];
 
     const container = document.getElementById('letterContainer');
@@ -123,10 +128,14 @@
       container.innerHTML = ''; // Clear previous content
       currentSet.forEach(row => {
         row.forEach(symbol => {
-          const button = document.createElement('div');
-          button.classList.add('letter');
-          button.textContent = symbol || ''; // Empty spaces for alignment
-          container.appendChild(button);
+          const div = document.createElement('div');
+          div.classList.add('letter');
+          if (symbol) {
+            div.textContent = symbol;
+          } else {
+            div.classList.add('empty');
+          }
+          container.appendChild(div);
         });
       });
     }
