@@ -1,705 +1,141 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>韓文拼音學習PWA</title>
-    <link rel="manifest" href="manifest.json">
-    <style>
-        /* Reset CSS */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>韓文字母表</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      margin: 0;
+    }
 
-        /* 基本樣式 */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f9f9f9;
-            color: #333;
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+    h1, h2 {
+      margin: 10px 0;
+    }
 
-        /* Header */
-        header {
-            background-color: #4CAF50;
-            color: #fff;
-            padding: 20px 0;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
+    .section {
+      margin: 20px 0;
+      width: 100%;
+      max-width: 600px;
+    }
 
-        header h1 {
-            font-size: 2.5rem;
-            animation: fadeInDown 1s ease-in-out;
-        }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
 
-        /* Navigation */
-        nav {
-            margin-top: 10px;
-        }
+    .letter {
+      width: 60px;
+      height: 60px;
+      background-color: #4caf50;
+      color: white;
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+    }
 
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        nav li {
-            margin: 0 15px;
-            position: relative;
-        }
-
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            font-size: 1.1rem;
-            transition: color 0.3s ease;
-        }
-
-        nav a:hover {
-            color: #ffd700;
-        }
-
-        /* Main Content */
-        main {
-            flex: 1;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            animation: fadeIn 1s ease-in-out;
-        }
-
-        section {
-            margin-bottom: 40px;
-        }
-
-        section h2 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #4CAF50;
-            display: inline-block;
-            padding-bottom: 5px;
-            animation: slideInLeft 1s ease-in-out;
-        }
-
-        /* 教材區域 */
-        #lesson-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            animation: fadeInUp 1s ease-in-out;
-        }
-
-        .char-card {
-            background-color: #fff;
-            border: 2px solid #4CAF50;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .char-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 8px 12px rgba(0,0,0,0.2);
-        }
-
-        .char-symbol {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            animation: bounceIn 1s ease;
-        }
-
-        .pronunciation {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            color: #555;
-        }
-
-        .play-btn {
-            background-color: #4CAF50;
-            border: none;
-            color: #fff;
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            animation: fadeIn 1s ease;
-        }
-
-        .play-btn:hover {
-            background-color: #45a049;
-        }
-
-        /* 練習區域 */
-        .practice-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            animation: fadeInUp 1s ease-in-out;
-        }
-
-        #start-practice-btn {
-            background-color: #008CBA;
-            border: none;
-            color: white;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-bottom: 20px;
-        }
-
-        #start-practice-btn:hover {
-            background-color: #007bb5;
-        }
-
-        #practice-content {
-            width: 100%;
-            max-width: 600px;
-            background-color: #fff;
-            border: 2px solid #4CAF50;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            display: none;
-            position: relative;
-        }
-
-        #question {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .options {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .option-btn {
-            background-color: #f44336;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            width: 45%;
-        }
-
-        .option-btn:hover {
-            background-color: #da190b;
-        }
-
-        .feedback {
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-align: center;
-            height: 30px;
-            color: #333;
-        }
-
-        /* 進度區域 */
-        #progress-content {
-            background-color: #fff;
-            border: 2px solid #4CAF50;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            animation: fadeInUp 1s ease-in-out;
-        }
-
-        #progress-content ul {
-            list-style: none;
-        }
-
-        #progress-content li {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            font-size: 1.1rem;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #progress-content li:last-child {
-            border-bottom: none;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #4CAF50;
-            color: #fff;
-            text-align: center;
-            padding: 15px 0;
-            position: relative;
-            animation: fadeIn 1s ease;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-100px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes bounceIn {
-            0%, 20%, 40%, 60%, 80%, 100% {
-                transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-            }
-            0% {
-                opacity: 0;
-                transform: scale3d(0.3, 0.3, 0.3);
-            }
-            20% {
-                transform: scale3d(1.1, 1.1, 1.1);
-            }
-            40% {
-                transform: scale3d(0.9, 0.9, 0.9);
-            }
-            60% {
-                opacity: 1;
-                transform: scale3d(1.03, 1.03, 1.03);
-            }
-            80% {
-                transform: scale3d(0.97, 0.97, 0.97);
-            }
-            100% {
-                opacity: 1;
-                transform: scale3d(1, 1, 1);
-            }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .char-card {
-                padding: 15px;
-            }
-
-            .char-symbol {
-                font-size: 2.5rem;
-            }
-
-            .pronunciation {
-                font-size: 1rem;
-            }
-
-            .play-btn {
-                padding: 8px 16px;
-                font-size: 0.9rem;
-            }
-
-            #question {
-                font-size: 1.3rem;
-            }
-
-            .option-btn {
-                font-size: 0.9rem;
-                padding: 8px 16px;
-            }
-
-            #start-practice-btn {
-                padding: 12px 24px;
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            nav ul {
-                flex-direction: column;
-            }
-
-            nav li {
-                margin: 10px 0;
-            }
-
-            .option-btn {
-                width: 100%;
-            }
-
-            #practice-content {
-                padding: 15px;
-            }
-        }
-    </style>
+    .letter:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <h1>韓文拼音學習</h1>
-        <nav>
-            <ul>
-                <li><a href="#lessons">教材</a></li>
-                <li><a href="#practice">練習</a></li>
-                <li><a href="#progress">進度</a></li>
-                <li><a href="#about">關於</a></li>
-            </ul>
-        </nav>
-    </header>
+  <h1>韓文字母表</h1>
 
-    <!-- Main Content -->
-    <main>
-        <!-- 教材區域 -->
-        <section id="lessons">
-            <h2>教材</h2>
-            <div id="lesson-content">
-                <!-- 子音教材 -->
-                <div class="char-category">
-                    <h3>子音</h3>
-                    <div class="char-grid">
-                        <!-- 子音卡片 -->
-                        <!-- 範例卡片，將由JavaScript動態生成 -->
-                    </div>
-                </div>
+  <!-- 單母音 -->
+  <div class="section">
+    <h2>單母音</h2>
+    <div class="container" id="vowelContainer"></div>
+  </div>
 
-                <!-- 母音教材 -->
-                <div class="char-category">
-                    <h3>母音</h3>
-                    <div class="char-grid">
-                        <!-- 母音卡片 -->
-                        <!-- 範例卡片，將由JavaScript動態生成 -->
-                    </div>
-                </div>
-            </div>
-        </section>
+  <!-- 複合母音 -->
+  <div class="section">
+    <h2>複合母音</h2>
+    <div class="container" id="compoundVowelContainer"></div>
+  </div>
 
-        <!-- 練習區域 -->
-        <section id="practice">
-            <h2>練習</h2>
-            <div class="practice-section">
-                <button id="start-practice-btn">開始練習</button>
-                <div id="practice-content">
-                    <p id="question">請選出 "g/k" 對應的字母：</p>
-                    <div class="options" id="options-container">
-                        <!-- 選項按鈕將由JavaScript動態生成 -->
-                    </div>
-                    <p class="feedback" id="feedback"></p>
-                </div>
-            </div>
-        </section>
+  <!-- 單子音 -->
+  <div class="section">
+    <h2>單子音</h2>
+    <div class="container" id="consonantContainer"></div>
+  </div>
 
-        <!-- 進度區域 -->
-        <section id="progress">
-            <h2>進度</h2>
-            <div id="progress-content">
-                <!-- 進度將由JavaScript動態生成 -->
-                <p>您還沒有開始學習。</p>
-            </div>
-        </section>
+  <!-- 雙子音 -->
+  <div class="section">
+    <h2>雙子音</h2>
+    <div class="container" id="doubleConsonantContainer"></div>
+  </div>
 
-        <!-- 關於區域 -->
-        <section id="about">
-            <h2>關於</h2>
-            <div id="about-content">
-                <p>這是一個用於學習韓文拼音（Hangul）的進階PWA，包含豐富的教材、互動練習和進度追踪功能。透過本應用，您可以有效地學習和練習韓文字母，提升韓語發音能力。</p>
-                <p>應用特色：</p>
-                <ul>
-                    <li>詳細的子音和母音教材展示</li>
-                    <li>互動式選擇題練習，提供即時反饋</li>
-                    <li>進度追踪，隨時查看學習成果</li>
-                    <li>響應式設計，適用於各種裝置</li>
-                    <li>動畫效果，提升使用體驗</li>
-                    <li>PWA特性，支持離線使用和主屏幕添加</li>
-                </ul>
-                <p>開始學習，掌握韓文拼音吧！</p>
-            </div>
-        </section>
-    </main>
+  <script>
+    const vowels = [
+      { symbol: 'ㅏ', roman: 'a' }, { symbol: 'ㅑ', roman: 'ya' },
+      { symbol: 'ㅓ', roman: 'eo' }, { symbol: 'ㅕ', roman: 'yeo' },
+      { symbol: 'ㅗ', roman: 'o' }, { symbol: 'ㅛ', roman: 'yo' },
+      { symbol: 'ㅜ', roman: 'u' }, { symbol: 'ㅠ', roman: 'yu' },
+      { symbol: 'ㅡ', roman: 'eu' }, { symbol: 'ㅣ', roman: 'i' }
+    ];
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 韓文拼音學習PWA | 由 OpenAI ChatGPT 提供支持</p>
-    </footer>
+    const compoundVowels = [
+      { symbol: 'ㅐ', roman: 'ae' }, { symbol: 'ㅒ', roman: 'yae' },
+      { symbol: 'ㅔ', roman: 'e' }, { symbol: 'ㅖ', roman: 'ye' },
+      { symbol: 'ㅘ', roman: 'wa' }, { symbol: 'ㅙ', roman: 'wae' },
+      { symbol: 'ㅚ', roman: 'oe' }, { symbol: 'ㅝ', roman: 'wo' },
+      { symbol: 'ㅞ', roman: 'we' }, { symbol: 'ㅟ', roman: 'wi' },
+      { symbol: 'ㅢ', roman: 'ui' }
+    ];
 
-    <!-- JavaScript -->
-    <script>
-        /* 
-         * 韓文字母數據
-         * 包含子音和母音，每個字母包含符號、發音和語音合成用的文本
-         */
-        const hangulData = {
-            consonants: [
-                { char: 'ㄱ', pronunciation: 'g/k', audioText: 'g k' },
-                { char: 'ㄴ', pronunciation: 'n', audioText: 'n' },
-                { char: 'ㄷ', pronunciation: 'd/t', audioText: 'd t' },
-                { char: 'ㄹ', pronunciation: 'r/l', audioText: 'r l' },
-                { char: 'ㅁ', pronunciation: 'm', audioText: 'm' },
-                { char: 'ㅂ', pronunciation: 'b/p', audioText: 'b p' },
-                { char: 'ㅅ', pronunciation: 's', audioText: 's' },
-                { char: 'ㅇ', pronunciation: 'ng (silent at beginning)', audioText: 'ng silent' },
-                { char: 'ㅈ', pronunciation: 'j', audioText: 'j' },
-                { char: 'ㅊ', pronunciation: 'ch', audioText: 'ch' },
-                { char: 'ㅋ', pronunciation: 'k', audioText: 'k' },
-                { char: 'ㅌ', pronunciation: 't', audioText: 't' },
-                { char: 'ㅍ', pronunciation: 'p', audioText: 'p' },
-                { char: 'ㅎ', pronunciation: 'h', audioText: 'h' }
-            ],
-            vowels: [
-                { char: 'ㅏ', pronunciation: 'a', audioText: 'a' },
-                { char: 'ㅑ', pronunciation: 'ya', audioText: 'ya' },
-                { char: 'ㅓ', pronunciation: 'eo', audioText: 'eo' },
-                { char: 'ㅕ', pronunciation: 'yeo', audioText: 'yeo' },
-                { char: 'ㅗ', pronunciation: 'o', audioText: 'o' },
-                { char: 'ㅛ', pronunciation: 'yo', audioText: 'yo' },
-                { char: 'ㅜ', pronunciation: 'u', audioText: 'u' },
-                { char: 'ㅠ', pronunciation: 'yu', audioText: 'yu' },
-                { char: 'ㅡ', pronunciation: 'eu', audioText: 'eu' },
-                { char: 'ㅣ', pronunciation: 'i', audioText: 'i' }
-            ]
-        };
+    const consonants = [
+      { symbol: 'ㄱ', roman: 'g/k' }, { symbol: 'ㄴ', roman: 'n' },
+      { symbol: 'ㄷ', roman: 'd/t' }, { symbol: 'ㄹ', roman: 'r/l' },
+      { symbol: 'ㅁ', roman: 'm' }, { symbol: 'ㅂ', roman: 'b/p' },
+      { symbol: 'ㅅ', roman: 's' }, { symbol: 'ㅇ', roman: '-/ng' },
+      { symbol: 'ㅈ', roman: 'j' }, { symbol: 'ㅊ', roman: 'ch' },
+      { symbol: 'ㅋ', roman: 'k' }, { symbol: 'ㅌ', roman: 't' },
+      { symbol: 'ㅍ', roman: 'p' }, { symbol: 'ㅎ', roman: 'h' }
+    ];
 
-        /* 
-         * 應用初始化
-         * 在DOM內容加載完成後，執行初始化函數
-         */
-        document.addEventListener('DOMContentLoaded', () => {
-            loadLessons();
-            loadProgress();
-            setupPractice();
-            registerServiceWorker();
+    const doubleConsonants = [
+      { symbol: 'ㄲ', roman: 'kk' }, { symbol: 'ㄸ', roman: 'tt' },
+      { symbol: 'ㅃ', roman: 'pp' }, { symbol: 'ㅆ', roman: 'ss' },
+      { symbol: 'ㅉ', roman: 'jj' }
+    ];
+
+    function renderLetters(containerId, letters) {
+      const container = document.getElementById(containerId);
+
+      letters.forEach(letter => {
+        const button = document.createElement('div');
+        button.classList.add('letter');
+        button.textContent = letter.symbol;
+
+        button.addEventListener('click', () => {
+          const original = button.textContent;
+          button.textContent = letter.roman;
+          setTimeout(() => {
+            button.textContent = original;
+          }, 2000);
         });
 
-        /* 
-         * 加載教材內容
-         * 動態生成子音和母音的卡片
-         */
-        function loadLessons() {
-            const lessonContent = document.getElementById('lesson-content');
+        container.appendChild(button);
+      });
+    }
 
-            // 加載子音
-            const consonantsSection = document.createElement('div');
-            consonantsSection.classList.add('char-category');
-
-            const consonantsHeader = document.createElement('h3');
-            consonantsHeader.textContent = '子音';
-            consonantsSection.appendChild(consonantsHeader);
-
-            const consonantsGrid = document.createElement('div');
-            consonantsGrid.classList.add('char-grid');
-
-            hangulData.consonants.forEach(char => {
-                const card = createCharCard(char);
-                consonantsGrid.appendChild(card);
-            });
-
-            consonantsSection.appendChild(consonantsGrid);
-            lessonContent.appendChild(consonantsSection);
-
-            // 加載母音
-            const vowelsSection = document.createElement('div');
-            vowelsSection.classList.add('char-category');
-
-            const vowelsHeader = document.createElement('h3');
-            vowelsHeader.textContent = '母音';
-            vowelsSection.appendChild(vowelsHeader);
-
-            const vowelsGrid = document.createElement('div');
-            vowelsGrid.classList.add('char-grid');
-
-            hangulData.vowels.forEach(char => {
-                const card = createCharCard(char);
-                vowelsGrid.appendChild(card);
-            });
-
-            vowelsSection.appendChild(vowelsGrid);
-            lessonContent.appendChild(vowelsSection);
-        }
-
-        /* 
-         * 創建字母卡片
-         * @param {Object} char - 包含字母、發音和音頻文本的對象
-         * @returns {HTMLElement} - 返回生成的卡片元素
-         */
-        function createCharCard(char) {
-            const card = document.createElement('div');
-            card.classList.add('char-card');
-
-            const symbol = document.createElement('div');
-            symbol.classList.add('char-symbol');
-            symbol.textContent = char.char;
-            card.appendChild(symbol);
-
-            const pronunciation = document.createElement('div');
-            pronunciation.classList.add('pronunciation');
-            pronunciation.textContent = `發音：${char.pronunciation}`;
-            card.appendChild(pronunciation);
-
-            const playBtn = document.createElement('button');
-            playBtn.classList.add('play-btn');
-            playBtn.textContent = '發音';
-            playBtn.addEventListener('click', () => {
-                speak(char.audioText);
-            });
-            card.appendChild(playBtn);
-
-            return card;
-        }
-
-        /* 
-         * 使用 Web Speech API 說出發音
-         * @param {string} text - 要說出的文本
-         */
-        function speak(text) {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'ko-KR'; // 設定語言為韓語
-                window.speechSynthesis.speak(utterance);
-            } else {
-                alert('抱歉，您的瀏覽器不支持語音合成功能。');
-            }
-        }
-
-        /* 
-         * 加載用戶進度
-         * 從本地存儲中獲取進度數據並顯示
-         */
-        function loadProgress() {
-            const progressContent = document.getElementById('progress-content');
-            const progress = JSON.parse(localStorage.getItem('progress')) || {};
-
-            if (Object.keys(progress).length === 0) {
-                progressContent.innerHTML = '<p>您還沒有開始學習。</p>';
-                return;
-            }
-
-            let html = '<ul>';
-            for (const [key, value] of Object.entries(progress)) {
-                html += `<li><span>${key}</span><span>${value} 分</span></li>`;
-            }
-            html += '</ul>';
-            progressContent.innerHTML = html;
-        }
-
-        /* 
-         * 設置練習功能
-         * 包含開始練習按鈕、生成問題和處理用戶選擇
-         */
-        function setupPractice() {
-            const startBtn = document.getElementById('start-practice-btn');
-            const practiceContent = document.getElementById('practice-content');
-            const questionEl = document.getElementById('question');
-            const optionsContainer = document.getElementById('options-container');
-            const feedbackEl = document.getElementById('feedback');
-
-            let currentQuestion = null;
-            let score = 0;
-            let total = 0;
-
-            startBtn.addEventListener('click', () => {
-                startBtn.style.display = 'none';
-                practiceContent.style.display = 'block';
-                generateQuestion();
-            });
-
-            /* 
-             * 生成新的練習問題
-             * 隨機選擇一個字母的發音，並提供選項
-             */
-            function generateQuestion() {
-                // 混合子音和母音
-                const allChars = [...hangulData.consonants, ...hangulData.vowels];
-                currentQuestion = allChars[Math.floor(Math.random() * allChars.length)];
-                questionEl.textContent = `請選出 "${currentQuestion.pronunciation}" 對應的字母：`;
-
-                // 隨機選擇三個錯誤選項
-                const options = [currentQuestion.char];
-                while (options.length < 4) {
-                    const randomChar = allChars[Math.floor(Math.random() * allChars.length)].char;
-                    if (!options.includes(randomChar)) {
-                        options.push(randomChar);
-                    }
-                }
-
-                // 打亂選項順序
-                options.sort(() => Math.random() - 0.5);
-
-                // 顯示選項
-                optionsContainer.innerHTML = '';
-                options.forEach(option => {
-                    const btn = document.createElement('button');
-                    btn.classList.add('option-btn');
-                    btn.textContent = option;
-                    btn.addEventListener('click', () => {
-                        if (option === currentQuestion.char) {
-                            feedbackEl.textContent = '✅ 正確！';
-                            feedbackEl.style.color = '#4CAF50';
-                            score += 1;
-                        } else {
-                            feedbackEl.textContent = `❌ 錯誤。正確答案是 "${currentQuestion.char}"。`;
-                            feedbackEl.style.color = '#f44336';
-                        }
-                        total += 1;
-                        saveProgress(currentQuestion.pronunciation, option === currentQuestion.char ? 1 : 0);
-                        setTimeout(() => {
-                            feedbackEl.textContent = '';
-                            generateQuestion();
-                        }, 2000);
-                    });
-                    optionsContainer.appendChild(btn);
-                });
-            }
-
-            /* 
-             * 保存進度到本地存儲
-             * @param {string} key - 發音
-             * @param {number} value - 分數增量
-             */
-            function saveProgress(key, value) {
-                const progress = JSON.parse(localStorage.getItem('progress')) || {};
-                if (!progress[key]) {
-                    progress[key] = 0;
-                }
-                progress[key] += value;
-                localStorage.setItem('progress', JSON.stringify(progress));
-                loadProgress();
-            }
-        }
-
-        /* 
-         * 註冊Service Worker以支持PWA功能
-         * 由於限制僅使用HTML和Manifest，此處提供基本的Service Worker註冊
-         */
-        function registerServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('data:application/javascript;base64,Y29uc29sZS5sb2coJ1NlcnZpY2UgV29ya2VyIFJlZ2lzdGVyZWQnKTs=')
-                    .then(registration => {
-                        console.log('Service Worker註冊成功：', registration);
-                    })
-                    .catch(error => {
-                        console.error('Service Worker註冊失敗：', error);
-                    });
-                });
-            }
-        }
-    </script>
+    renderLetters('vowelContainer', vowels);
+    renderLetters('compoundVowelContainer', compoundVowels);
+    renderLetters('consonantContainer', consonants);
+    renderLetters('doubleConsonantContainer', doubleConsonants);
+  </script>
 </body>
 </html>
