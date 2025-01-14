@@ -1,42 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>韓文字母表</title>
+  <title>50音表</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1C212B">
+  <link rel="icon" href="icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
+      font-family: "Zen Maru Gothic", serif;
+      font-weight: 500;
+      background-color: #1C212B;
+      color: white;
+      text-align: center;
       margin: 0;
+      padding: 20px;
     }
 
-    h1, h2 {
-      margin: 10px 0;
+    h1 {
+      margin-bottom: 10px;
     }
 
-    .section {
-      margin: 20px 0;
-      width: 100%;
-      max-width: 600px;
+    .toggle-buttons {
+      margin-bottom: 20px;
+    }
+
+    .toggle-buttons button {
+      background-color: white;
+      color: #1C212B;
+      border: none;
+      padding: 10px 20px;
+      margin: 0 5px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-family: "Zen Maru Gothic", serif;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+
+    .toggle-buttons button:hover {
+      background-color: #43588D;
+      color: white;
+    }
+
+    .active {
+      background-color: #43588D;
+      color: white;
     }
 
     .container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
       gap: 10px;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     .letter {
       width: 60px;
       height: 60px;
-      background-color: #4caf50;
-      color: white;
+      background-color: white;
+      color: #1C212B;
       font-size: 24px;
       display: flex;
       justify-content: center;
@@ -44,98 +73,113 @@
       border-radius: 10px;
       cursor: pointer;
       transition: background-color 0.3s, color 0.3s;
+      font-family: "Zen Maru Gothic", serif;
     }
 
     .letter:hover {
-      background-color: #45a049;
+      background-color: #43588D;
+      color: white;
     }
   </style>
 </head>
 <body>
-  <h1>韓文字母表</h1>
-
-  <!-- 單母音 -->
-  <div class="section">
-    <h2>單母音</h2>
-    <div class="container" id="vowelContainer"></div>
+  <h1>50音表</h1>
+  <div class="toggle-buttons">
+    <button id="hiraganaButton" class="active">ひらがな</button>
+    <button id="katakanaButton">カタカナ</button>
   </div>
-
-  <!-- 複合母音 -->
-  <div class="section">
-    <h2>複合母音</h2>
-    <div class="container" id="compoundVowelContainer"></div>
-  </div>
-
-  <!-- 單子音 -->
-  <div class="section">
-    <h2>單子音</h2>
-    <div class="container" id="consonantContainer"></div>
-  </div>
-
-  <!-- 雙子音 -->
-  <div class="section">
-    <h2>雙子音</h2>
-    <div class="container" id="doubleConsonantContainer"></div>
-  </div>
+  <div class="container" id="letterContainer"></div>
 
   <script>
-    const vowels = [
-      { symbol: 'ㅏ', roman: 'a' }, { symbol: 'ㅑ', roman: 'ya' },
-      { symbol: 'ㅓ', roman: 'eo' }, { symbol: 'ㅕ', roman: 'yeo' },
-      { symbol: 'ㅗ', roman: 'o' }, { symbol: 'ㅛ', roman: 'yo' },
-      { symbol: 'ㅜ', roman: 'u' }, { symbol: 'ㅠ', roman: 'yu' },
-      { symbol: 'ㅡ', roman: 'eu' }, { symbol: 'ㅣ', roman: 'i' }
+    const hiragana = [
+      ['あ', 'い', 'う', 'え', 'お'],
+      ['か', 'き', 'く', 'け', 'こ'],
+      ['さ', 'し', 'す', 'せ', 'そ'],
+      ['た', 'ち', 'つ', 'て', 'と'],
+      ['な', 'に', 'ぬ', 'ね', 'の'],
+      ['は', 'ひ', 'ふ', 'へ', 'ほ'],
+      ['ま', 'み', 'む', 'め', 'も'],
+      ['や', '', 'ゆ', '', 'よ'],
+      ['ら', 'り', 'る', 'れ', 'ろ'],
+      ['わ', '', '', '', 'を'],
+      ['ん', '', '', '', '']
     ];
 
-    const compoundVowels = [
-      { symbol: 'ㅐ', roman: 'ae' }, { symbol: 'ㅒ', roman: 'yae' },
-      { symbol: 'ㅔ', roman: 'e' }, { symbol: 'ㅖ', roman: 'ye' },
-      { symbol: 'ㅘ', roman: 'wa' }, { symbol: 'ㅙ', roman: 'wae' },
-      { symbol: 'ㅚ', roman: 'oe' }, { symbol: 'ㅝ', roman: 'wo' },
-      { symbol: 'ㅞ', roman: 'we' }, { symbol: 'ㅟ', roman: 'wi' },
-      { symbol: 'ㅢ', roman: 'ui' }
+    const katakana = [
+      ['ア', 'イ', 'ウ', 'エ', 'オ'],
+      ['カ', 'キ', 'ク', 'ケ', 'コ'],
+      ['サ', 'シ', 'ス', 'セ', 'ソ'],
+      ['タ', 'チ', 'ツ', 'テ', 'ト'],
+      ['ナ', 'ニ', 'ヌ', 'ネ', 'ノ'],
+      ['ハ', 'ヒ', 'フ', 'ヘ', 'ホ'],
+      ['マ', 'ミ', 'ム', 'メ', 'モ'],
+      ['ヤ', '', 'ユ', '', 'ヨ'],
+      ['ラ', 'リ', 'ル', 'レ', 'ロ'],
+      ['ワ', '', '', '', 'ヲ'],
+      ['ン', '', '', '', '']
     ];
 
-    const consonants = [
-      { symbol: 'ㄱ', roman: 'g/k' }, { symbol: 'ㄴ', roman: 'n' },
-      { symbol: 'ㄷ', roman: 'd/t' }, { symbol: 'ㄹ', roman: 'r/l' },
-      { symbol: 'ㅁ', roman: 'm' }, { symbol: 'ㅂ', roman: 'b/p' },
-      { symbol: 'ㅅ', roman: 's' }, { symbol: 'ㅇ', roman: '-/ng' },
-      { symbol: 'ㅈ', roman: 'j' }, { symbol: 'ㅊ', roman: 'ch' },
-      { symbol: 'ㅋ', roman: 'k' }, { symbol: 'ㅌ', roman: 't' },
-      { symbol: 'ㅍ', roman: 'p' }, { symbol: 'ㅎ', roman: 'h' }
+    const romanized = [
+      ['a', 'i', 'u', 'e', 'o'],
+      ['ka', 'ki', 'ku', 'ke', 'ko'],
+      ['sa', 'shi', 'su', 'se', 'so'],
+      ['ta', 'chi', 'tsu', 'te', 'to'],
+      ['na', 'ni', 'nu', 'ne', 'no'],
+      ['ha', 'hi', 'fu', 'he', 'ho'],
+      ['ma', 'mi', 'mu', 'me', 'mo'],
+      ['ya', '', 'yu', '', 'yo'],
+      ['ra', 'ri', 'ru', 're', 'ro'],
+      ['wa', '', '', '', 'wo'],
+      ['n', '', '', '', '']
     ];
 
-    const doubleConsonants = [
-      { symbol: 'ㄲ', roman: 'kk' }, { symbol: 'ㄸ', roman: 'tt' },
-      { symbol: 'ㅃ', roman: 'pp' }, { symbol: 'ㅆ', roman: 'ss' },
-      { symbol: 'ㅉ', roman: 'jj' }
-    ];
+    const container = document.getElementById('letterContainer');
+    const hiraganaButton = document.getElementById('hiraganaButton');
+    const katakanaButton = document.getElementById('katakanaButton');
 
-    function renderLetters(containerId, letters) {
-      const container = document.getElementById(containerId);
+    let currentSet = hiragana; // Default to Hiragana
 
-      letters.forEach(letter => {
-        const button = document.createElement('div');
-        button.classList.add('letter');
-        button.textContent = letter.symbol;
+    function renderLetters() {
+      container.innerHTML = ''; // Clear previous content
+      currentSet.forEach((row, rowIndex) => {
+        row.forEach((symbol, colIndex) => {
+          if (symbol) {
+            const button = document.createElement('div');
+            button.classList.add('letter');
+            button.textContent = symbol;
 
-        button.addEventListener('click', () => {
-          const original = button.textContent;
-          button.textContent = letter.roman;
-          setTimeout(() => {
-            button.textContent = original;
-          }, 2000);
+            button.addEventListener('click', () => {
+              const original = button.textContent;
+              button.textContent = romanized[rowIndex][colIndex];
+              button.style.color = '#43588D';
+              setTimeout(() => {
+                button.textContent = original;
+                button.style.color = '#1C212B';
+              }, 2000);
+            });
+
+            container.appendChild(button);
+          }
         });
-
-        container.appendChild(button);
       });
     }
 
-    renderLetters('vowelContainer', vowels);
-    renderLetters('compoundVowelContainer', compoundVowels);
-    renderLetters('consonantContainer', consonants);
-    renderLetters('doubleConsonantContainer', doubleConsonants);
+    hiraganaButton.addEventListener('click', () => {
+      currentSet = hiragana;
+      hiraganaButton.classList.add('active');
+      katakanaButton.classList.remove('active');
+      renderLetters();
+    });
+
+    katakanaButton.addEventListener('click', () => {
+      currentSet = katakana;
+      katakanaButton.classList.add('active');
+      hiraganaButton.classList.remove('active');
+      renderLetters();
+    });
+
+    // Initial render
+    renderLetters();
   </script>
 </body>
 </html>
